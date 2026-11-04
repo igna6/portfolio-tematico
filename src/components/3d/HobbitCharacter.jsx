@@ -1,10 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF, useAnimations } from '@react-three/drei';
+import { useGLTF, useAnimations, useScroll } from '@react-three/drei';
 import { ModelErrorBoundary } from './Models';
 
 function HobbitInternal(props) {
     const groupRef = useRef();
+    const scroll = useScroll();
     const { scene, animations } = useGLTF('/models/hobbit.glb');
     const { actions } = useAnimations(animations, groupRef);
 
@@ -17,6 +18,11 @@ function HobbitInternal(props) {
 
     useFrame((state) => {
         if (groupRef.current) {
+            // Solo visible en el capítulo 1 (La Comarca)
+            if (scroll) {
+                groupRef.current.visible = scroll.offset <= 0.28;
+            }
+
             const time = state.clock.elapsedTime * 6;
             // Bamboleo suave centrado
             const baseY = props.position ? props.position[1] : 0;

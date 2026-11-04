@@ -45,10 +45,10 @@ const chapterTracks = [
     },
     // Capítulo IV: Erebor
     {
-        startPos: [0, 2.8, -65.0],
-        startLook: [0, 2.2, -79],
-        endPos: [0, 2.2, -73.0],
-        endLook: [0, 2.5, -80]
+        startPos: [0, 3.2, -84.0],
+        startLook: [0, 2.4, -101],
+        endPos: [0, 2.4, -92.0],
+        endLook: [0, 2.5, -101]
     }
 ];
 

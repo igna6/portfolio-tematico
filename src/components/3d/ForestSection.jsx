@@ -1,7 +1,10 @@
-import React, { Suspense } from 'react';
-import { Float, Sparkles } from '@react-three/drei';
+import React, { useRef, Suspense } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Float, Sparkles, useScroll } from '@react-three/drei';
+import { SectionBackground } from './SectionBackground';
 import {
     PineTree,
+    PineCluster,
     Rock1,
     Rock2,
     StoneArch,
@@ -10,8 +13,30 @@ import {
 } from './Models';
 
 export function ForestSection() {
+    const scroll = useScroll();
+    const groupRef = useRef();
+
+    useFrame(() => {
+        if (!scroll) return;
+        // El bosque solo debe verse durante el Capítulo II (0.24 a 0.52)
+        const isNearForest = scroll.offset >= 0.24 && scroll.offset <= 0.52;
+        if (groupRef.current) {
+            groupRef.current.visible = isNearForest;
+        }
+    });
+
     return (
-        <group position={[18, 0, -25]} name="forest-biome">
+        <group ref={groupRef} position={[18, 0, -25]} name="forest-biome">
+            {/* 🌲 DOMO PANORÁMICO 360° DEL BOSQUE */}
+            <Suspense fallback={null}>
+                <SectionBackground
+                    path="/backgrounds/bosque.jpg"
+                    radius={50}
+                    position={[0, 0, 0]}
+                    rotation={[0, -Math.PI / 2, 0]}
+                />
+            </Suspense>
+
             {/* Iluminación mágica verde esmeralda con buen alcance */}
             <pointLight
                 position={[0, 4.5, 0]}
@@ -93,10 +118,22 @@ export function ForestSection() {
                 <PineTree position={[6.8, 0, 4.8]} scale={1.3} />
                 <PineTree position={[4.5, 0, 6.2]} scale={1.25} />
 
-                {/* Fondo detrás del portal */}
-                <PineTree position={[-2.5, 0, -7.0]} scale={1.6} />
-                <PineTree position={[2.5, 0, -7.0]} scale={1.5} />
-                <PineTree position={[0.0, 0, -8.5]} scale={1.8} />
+                {/* Fondo detrás del portal - Muralla impenetrable de árboles densos */}
+                <PineCluster position={[0.0, 0, -9.5]} scale={2.5} />
+                <PineCluster position={[-4.5, 0, -8.5]} scale={2.2} />
+                <PineCluster position={[4.5, 0, -8.5]} scale={2.2} />
+                <PineCluster position={[-7.5, 0, -6.5]} scale={2.0} />
+                <PineCluster position={[7.5, 0, -6.5]} scale={2.0} />
+
+                <PineTree position={[-2.5, 0, -7.0]} scale={1.8} />
+                <PineTree position={[2.5, 0, -7.0]} scale={1.8} />
+                <PineTree position={[0.0, 0, -7.5]} scale={2.0} />
+
+                {/* Pared oscura de fondo para no dejar escapar luz ni vacío */}
+                <mesh position={[0, 4, -11]}>
+                    <planeGeometry args={[50, 18]} />
+                    <meshBasicMaterial color="#040d08" fog={false} />
+                </mesh>
 
                 <Rock1 position={[-3.5, 0, 2.5]} scale={1.1} rotation={[0, 0.5, 0]} />
                 <Rock2 position={[3.5, 0, 2.0]} scale={1.2} rotation={[0, -0.7, 0]} />

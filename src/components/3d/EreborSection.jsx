@@ -77,8 +77,8 @@ export function EreborSection() {
 
     useFrame(() => {
         if (!scroll) return;
-        // 🎯 Hacemos que Erebor empiece a mostrarse desde el 68% del scroll hasta el final
-        const isNearErebor = scroll.offset >= 0.68 && scroll.offset <= 1.0;
+        // 🎯 Hacemos que Erebor empiece a mostrarse a partir del 80% del scroll (Capítulo IV)
+        const isNearErebor = scroll.offset >= 0.80 && scroll.offset <= 1.0;
         if (groupRef.current) {
             groupRef.current.visible = isNearErebor;
         }
@@ -86,12 +86,13 @@ export function EreborSection() {
 
     return (
         <group ref={groupRef} position={[0, 0, -90]} name="erebor-biome">
-            {/* 🖼️ FONDO DEL SALÓN DEL TRONO */}
+            {/* 🖼️ DOMO PANORÁMICO 360° DE EREBOR */}
             <Suspense fallback={null}>
                 <SectionBackground
                     path="/backgrounds/erebor.jpg"
-                    position={[0, 12, -21]}
-                    scale={[65, 38, 1]}
+                    radius={55}
+                    position={[0, 0, -8]}
+                    rotation={[0, -Math.PI / 2, 0]}
                 />
             </Suspense>
             {/* Suelo del Gran Salón de Thrór */}
@@ -100,9 +101,19 @@ export function EreborSection() {
                 <meshStandardMaterial color="#181d28" roughness={0.8} metalness={0.25} />
             </mesh>
 
-            {/* Muro posterior de la montaña enana */}
+            {/* Muro posterior de la montaña enana - Sellado completo */}
             <mesh position={[0, 12, -18]} receiveShadow>
-                <boxGeometry args={[36, 26, 2]} />
+                <boxGeometry args={[48, 28, 2]} />
+                <meshStandardMaterial color="#0e121a" roughness={0.9} />
+            </mesh>
+
+            {/* Muros laterales del Salón Real */}
+            <mesh position={[-16, 12, -4]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+                <boxGeometry args={[36, 28, 2]} />
+                <meshStandardMaterial color="#0e121a" roughness={0.9} />
+            </mesh>
+            <mesh position={[16, 12, -4]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
+                <boxGeometry args={[36, 28, 2]} />
                 <meshStandardMaterial color="#0e121a" roughness={0.9} />
             </mesh>
 

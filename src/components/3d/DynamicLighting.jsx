@@ -6,7 +6,7 @@ const BIOME_SETTINGS = [
     // 0. La Comarca
     {
         fogColor: '#09111e',
-        fogDensity: 0.012,
+        fogDensity: 0.016,
         hemiSky: '#fef3c7',
         hemiGround: '#1a3a1a',
         hemiIntensity: 0.9,
@@ -16,32 +16,32 @@ const BIOME_SETTINGS = [
     // 1. El Bosque del Conocimiento
     {
         fogColor: '#051610',
-        fogDensity: 0.015,
+        fogDensity: 0.022,
         hemiSky: '#6ee7b7',
         hemiGround: '#064e3b',
         hemiIntensity: 0.6,
         dirColor: '#34d399',
         dirIntensity: 1.2
     },
-    // 2. Minas de Moria (Sin tintes marrones)
+    // 2. Minas de Moria (Cambiado de marrón #451a03 a gris piedra oscuro)
     {
-        fogColor: '#060709',       // 👈 Fondo casi negro neutro
-        fogDensity: 0.008,        // 👈 Niebla baja
-        hemiSky: '#18181b',       // 👈 Gris piedra
-        hemiGround: '#09090b',
-        hemiIntensity: 0.4,
+        fogColor: '#08080a',
+        fogDensity: 0.022,
+        hemiSky: '#1c1917',      // 👈 Se quitó el marrón rojizo para evitar el filtro pardo
+        hemiGround: '#0c0a09',
+        hemiIntensity: 0.3,
         dirColor: '#f97316',
         dirIntensity: 0.8
     },
-    // 3. Erebor: Salón del trono (Niebla ultra cristalina)
+    // 3. Erebor: Salón del trono (Luz dorada más amplia y niebla cristalina)
     {
-        fogColor: '#0a0d14',       // 👈 Azul noche/dorado oscuro
-        fogDensity: 0.003,        // 👈 Niebla casi nula para ver toda la escena libremente
+        fogColor: '#0f131d',
+        fogDensity: 0.008,      // 👈 Niebla ultra tenue para ver toda la escena a la distancia
         hemiSky: '#fef08a',
         hemiGround: '#1c1917',
-        hemiIntensity: 1.3,
+        hemiIntensity: 1.4,     // 👈 Alta claridad
         dirColor: '#f59e0b',
-        dirIntensity: 3.5
+        dirIntensity: 4.0       // 👈 Sol dorado potente sobre el trono
     }
 ];
 

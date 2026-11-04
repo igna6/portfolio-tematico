@@ -1,7 +1,11 @@
-import React, { Suspense, useMemo, memo } from 'react';
+import React, { useRef, Suspense, useMemo, memo } from 'react';
 import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
+import { useScroll } from '@react-three/drei';
+import { SectionBackground } from './SectionBackground';
 import {
     PineTree,
+    PineCluster,
     Rock1,
     Rock2,
     StonePath,
@@ -105,16 +109,38 @@ const DenseVegetation = memo(function DenseVegetation() {
 });
 
 export function ShireEnvironment() {
+    const scroll = useScroll();
+    const groupRef = useRef();
+
+    useFrame(() => {
+        if (!scroll) return;
+        // La comarca está visible desde el inicio hasta la transición al bosque (~0.28)
+        const isNearShire = scroll.offset <= 0.28;
+        if (groupRef.current) {
+            groupRef.current.visible = isNearShire;
+        }
+    });
+
     return (
-        <group name="shire-biome">
-            {/* 🌿 PISO BASE DE PASTO */}
+        <group ref={groupRef} name="shire-biome">
+            {/* 🌄 DOMO PANORÁMICO 360° DE LA COMARCA */}
+            <Suspense fallback={null}>
+                <SectionBackground
+                    path="/backgrounds/comarca.jpg"
+                    radius={60}
+                    position={[0, 0, 0]}
+                    rotation={[0, -Math.PI / 2, 0]}
+                />
+            </Suspense>
+
+            {/* 🌿 PISO BASE DE PASTO CIRCULAR Y ACOTADO */}
             <mesh
                 rotation={[-Math.PI / 2, 0, 0]}
                 position={[0, -0.02, 0]}
                 receiveShadow
             >
-                <planeGeometry args={[500, 500]} />
-                <meshBasicMaterial color="#224d27" fog={false} />
+                <circleGeometry args={[28, 48]} />
+                <meshStandardMaterial color="#224d27" roughness={0.9} />
             </mesh>
 
             {/* 🐍 CAMINO CONTINUO */}
@@ -182,7 +208,26 @@ export function ShireEnvironment() {
                 <PineTree position={[9.5, 0, -3.5]} scale={1.65} />
                 <PineTree position={[8.5, 0, -8.5]} scale={1.7} />
                 <PineTree position={[6.0, 0, -11.0]} scale={1.35} />
-                <PineTree position={[12.0, 0, -6.0]} scale={1.8} />
+                {/* 🌲🌲 BARRERA DENSA FRONTAL Y LATERAL (Tapa completamente el fondo y las otras escenas) */}
+                {/* Muralla de árboles justo al final del sendero (Z: -6 a -15) */}
+                <PineCluster position={[0.5, 0, -11.0]} scale={2.5} />
+                <PineCluster position={[-3.5, 0, -9.5]} scale={2.4} />
+                <PineCluster position={[4.0, 0, -9.5]} scale={2.4} />
+                <PineCluster position={[-6.8, 0, -8.0]} scale={2.2} />
+                <PineCluster position={[7.2, 0, -8.0]} scale={2.2} />
+
+                {/* Segunda capa de pinos densos altos cerrando el horizonte */}
+                <PineTree position={[-1.5, 0, -8.5]} scale={2.1} />
+                <PineTree position={[2.0, 0, -8.5]} scale={2.1} />
+                <PineTree position={[0.0, 0, -7.0]} scale={1.8} />
+                <PineTree position={[-3.0, 0, -6.5]} scale={1.7} />
+                <PineTree position={[3.2, 0, -6.5]} scale={1.7} />
+
+                {/* Colinas / Bloqueadores de visión de fondo para cerrar el suelo */}
+                <mesh position={[0, 4, -14]} rotation={[0, 0, 0]}>
+                    <planeGeometry args={[60, 20]} />
+                    <meshBasicMaterial color="#0b170e" fog={false} />
+                </mesh>
             </Suspense>
         </group>
     );
