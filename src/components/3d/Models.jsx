@@ -351,3 +351,22 @@ export function WallModel(props) {
 }
 
 useGLTF.preload('/models/wall.glb');
+
+// 🧙 Personaje Hobbit (hobbit.glb)
+export function HobbitCharacter(props) {
+    return (
+        <ModelErrorBoundary
+            path="/models/hobbit.glb"
+            fallback={
+                <mesh position={props.position} scale={props.scale || 1}>
+                    <capsuleGeometry args={[0.3, 0.6, 4, 8]} />
+                    <meshStandardMaterial color="#d97706" />
+                </mesh>
+            }
+        >
+            <Suspense fallback={null}>
+                <SafeModel path="/models/hobbit.glb" {...props} />
+            </Suspense>
+        </ModelErrorBoundary>
+    );
+}

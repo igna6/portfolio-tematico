@@ -10,62 +10,100 @@ import {
     BrazierModel
 } from './Models';
 
-// 👑 Trono ceremonial esculpido de Erebor
+// 👑 Trono Monumental Esculpido de Erebor (Geometría Enana & Oro)
 export function ProceduralThrone({ position = [0, 0, 0], scale = 1 }) {
     return (
         <group position={position} scale={scale}>
-            {/* Estrado escalonado */}
-            <mesh position={[0, 0.2, 0]} castShadow receiveShadow>
-                <boxGeometry args={[5.2, 0.4, 4.8]} />
-                <meshStandardMaterial color="#222834" roughness={0.8} metalness={0.25} />
+            {/* 🏛️ BASE ESCALONADA (Granito oscuro labrado con detalles metálicos) */}
+            <mesh position={[0, 0.15, 0]} castShadow receiveShadow>
+                <boxGeometry args={[6.2, 0.3, 5.2]} />
+                <meshStandardMaterial color="#161b26" roughness={0.8} metalness={0.3} />
             </mesh>
-            <mesh position={[0, 0.55, 0.2]} castShadow receiveShadow>
-                <boxGeometry args={[4.2, 0.35, 3.8]} />
-                <meshStandardMaterial color="#2a3241" roughness={0.75} metalness={0.3} />
+            <mesh position={[0, 0.45, 0.2]} castShadow receiveShadow>
+                <boxGeometry args={[5.0, 0.3, 4.2]} />
+                <meshStandardMaterial color="#1f2636" roughness={0.7} metalness={0.35} />
             </mesh>
-            <mesh position={[0, 0.85, 0.4]} castShadow receiveShadow>
-                <boxGeometry args={[3.2, 0.3, 2.8]} />
-                <meshStandardMaterial color="#333c4d" roughness={0.7} metalness={0.35} />
-            </mesh>
-
-            {/* Asiento del Trono */}
-            <mesh position={[0, 1.4, 0.1]} castShadow receiveShadow>
-                <boxGeometry args={[2.0, 0.85, 1.6]} />
-                <meshStandardMaterial color="#1e2430" roughness={0.65} metalness={0.4} />
+            <mesh position={[0, 0.75, 0.4]} castShadow receiveShadow>
+                <boxGeometry args={[3.8, 0.3, 3.2]} />
+                <meshStandardMaterial color="#283144" roughness={0.65} metalness={0.4} />
             </mesh>
 
-            {/* Cojín ceremonial carmesí real */}
-            <mesh position={[0, 1.85, 0.1]}>
-                <boxGeometry args={[1.7, 0.15, 1.3]} />
-                <meshStandardMaterial color="#7f1d1d" roughness={0.6} />
+            {/* 🏮 PILARES RUNICOS LATERALES EN LA BASE */}
+            <mesh position={[-1.75, 1.3, 0.4]} castShadow receiveShadow>
+                <boxGeometry args={[0.3, 0.8, 0.3]} />
+                <meshStandardMaterial color="#1e2430" roughness={0.5} metalness={0.6} />
+            </mesh>
+            <mesh position={[1.75, 1.3, 0.4]} castShadow receiveShadow>
+                <boxGeometry args={[0.3, 0.8, 0.3]} />
+                <meshStandardMaterial color="#1e2430" roughness={0.5} metalness={0.6} />
+            </mesh>
+            <mesh position={[-1.75, 1.75, 0.4]}>
+                <octahedronGeometry args={[0.18, 0]} />
+                <meshStandardMaterial color="#facc15" roughness={0.15} metalness={0.95} emissive="#eab308" emissiveIntensity={0.6} />
+            </mesh>
+            <mesh position={[1.75, 1.75, 0.4]}>
+                <octahedronGeometry args={[0.18, 0]} />
+                <meshStandardMaterial color="#facc15" roughness={0.15} metalness={0.95} emissive="#eab308" emissiveIntensity={0.6} />
             </mesh>
 
-            {/* Respaldo monumental esculpido con corona dorada */}
-            <mesh position={[0, 3.0, -0.6]} castShadow receiveShadow>
-                <boxGeometry args={[2.2, 2.6, 0.5]} />
-                <meshStandardMaterial color="#2d3545" roughness={0.7} metalness={0.35} />
+            {/* 🛋️ ASIENTO CENTRAL & COJÍN CARMESÍ */}
+            <mesh position={[0, 1.35, 0.1]} castShadow receiveShadow>
+                <boxGeometry args={[2.2, 0.8, 1.8]} />
+                <meshStandardMaterial color="#151922" roughness={0.7} metalness={0.4} />
             </mesh>
-            <mesh position={[0, 4.4, -0.6]} castShadow receiveShadow>
-                <coneGeometry args={[1.2, 1.0, 4]} />
-                <meshStandardMaterial color="#facc15" roughness={0.2} metalness={0.9} />
+            <mesh position={[0, 1.8, 0.1]} castShadow receiveShadow>
+                <boxGeometry args={[1.9, 0.18, 1.5]} />
+                <meshStandardMaterial color="#6b1414" roughness={0.5} />
             </mesh>
 
-            {/* Reposabrazos tallados con remates de oro */}
-            <mesh position={[-1.1, 1.7, 0.1]} castShadow receiveShadow>
-                <boxGeometry args={[0.4, 0.7, 1.5]} />
-                <meshStandardMaterial color="#333c4d" roughness={0.7} metalness={0.35} />
+            {/* 👑 RESPALDO MONUMENTAL PICUDO (Estilo Piedra Tallada Enana) */}
+            <mesh position={[0, 3.2, -0.6]} castShadow receiveShadow>
+                <boxGeometry args={[2.4, 2.8, 0.4]} />
+                <meshStandardMaterial color="#1f2636" roughness={0.6} metalness={0.4} />
             </mesh>
-            <mesh position={[1.1, 1.7, 0.1]} castShadow receiveShadow>
-                <boxGeometry args={[0.4, 0.7, 1.5]} />
-                <meshStandardMaterial color="#333c4d" roughness={0.7} metalness={0.35} />
+
+            {/* Picos Angulares Superiores del Respaldo */}
+            <mesh position={[0, 4.8, -0.6]} rotation={[0, Math.PI / 4, 0]} castShadow receiveShadow>
+                <cylinderGeometry args={[0, 1.3, 1.4, 4]} />
+                <meshStandardMaterial color="#2d374d" roughness={0.5} metalness={0.5} />
             </mesh>
-            <mesh position={[-1.1, 2.1, 0.7]}>
-                <boxGeometry args={[0.42, 0.12, 0.25]} />
-                <meshStandardMaterial color="#facc15" metalness={0.95} roughness={0.15} />
+            <mesh position={[-1.0, 4.4, -0.6]} rotation={[0, Math.PI / 4, 0]} castShadow receiveShadow>
+                <cylinderGeometry args={[0, 0.7, 1.0, 4]} />
+                <meshStandardMaterial color="#1f2636" roughness={0.6} metalness={0.4} />
             </mesh>
-            <mesh position={[1.1, 2.1, 0.7]}>
-                <boxGeometry args={[0.42, 0.12, 0.25]} />
-                <meshStandardMaterial color="#facc15" metalness={0.95} roughness={0.15} />
+            <mesh position={[1.0, 4.4, -0.6]} rotation={[0, Math.PI / 4, 0]} castShadow receiveShadow>
+                <cylinderGeometry args={[0, 0.7, 1.0, 4]} />
+                <meshStandardMaterial color="#1f2636" roughness={0.6} metalness={0.4} />
+            </mesh>
+
+            {/* 💎 EMBLEMA Y CORONA DORADA CENTRAL EN EL RESPALDO */}
+            <mesh position={[0, 3.8, -0.38]} rotation={[0, 0, Math.PI / 4]}>
+                <boxGeometry args={[0.7, 0.7, 0.1]} />
+                <meshStandardMaterial color="#facc15" roughness={0.2} metalness={0.9} emissive="#eab308" emissiveIntensity={0.3} />
+            </mesh>
+            <mesh position={[0, 3.8, -0.32]}>
+                <dodecahedronGeometry args={[0.18]} />
+                <meshStandardMaterial color="#38bdf8" roughness={0.1} metalness={0.9} emissive="#0284c7" emissiveIntensity={0.8} />
+            </mesh>
+
+            {/* 🛡️ REPOSABRAZOS MONOLÍTICOS CON CABEZAS DE LEÓN/CABEZA ENANA DORADA */}
+            <mesh position={[-1.2, 1.95, 0.1]} castShadow receiveShadow>
+                <boxGeometry args={[0.45, 0.85, 1.7]} />
+                <meshStandardMaterial color="#283144" roughness={0.6} metalness={0.45} />
+            </mesh>
+            <mesh position={[1.2, 1.95, 0.1]} castShadow receiveShadow>
+                <boxGeometry args={[0.45, 0.85, 1.7]} />
+                <meshStandardMaterial color="#283144" roughness={0.6} metalness={0.45} />
+            </mesh>
+
+            {/* Remates frontales tallados de los reposabrazos */}
+            <mesh position={[-1.2, 2.45, 0.85]} rotation={[Math.PI / 4, 0, 0]}>
+                <boxGeometry args={[0.48, 0.22, 0.28]} />
+                <meshStandardMaterial color="#facc15" roughness={0.15} metalness={0.95} />
+            </mesh>
+            <mesh position={[1.2, 2.45, 0.85]} rotation={[Math.PI / 4, 0, 0]}>
+                <boxGeometry args={[0.48, 0.22, 0.28]} />
+                <meshStandardMaterial color="#facc15" roughness={0.15} metalness={0.95} />
             </mesh>
         </group>
     );

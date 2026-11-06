@@ -1,5 +1,7 @@
 import React, { useRef, Suspense, useMemo } from 'react';
 import { SectionBackground } from './SectionBackground';
+import { useControls } from 'leva';
+import { PivotControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useScroll } from '@react-three/drei';
@@ -323,6 +325,7 @@ export function MoriaSection() {
                     rotation={[0, -Math.PI / 2, 0]}
                 />
             </Suspense>
+
 
             {/* Suelo base */}
             <mesh position={[0, 0.005, -5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>

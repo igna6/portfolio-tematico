@@ -9,7 +9,8 @@ import {
     Rock2,
     StoneArch,
     FallenLog,
-    GlowingMushrooms
+    GlowingMushrooms,
+    HobbitCharacter // 👈 Lo importamos directamente desde Models.jsx
 } from './Models';
 
 export function ForestSection() {
@@ -18,7 +19,7 @@ export function ForestSection() {
 
     useFrame(() => {
         if (!scroll) return;
-        // El bosque solo debe verse durante el Capítulo II (0.24 a 0.52)
+        // El bosque solo se muestra en el Capítulo II
         const isNearForest = scroll.offset >= 0.24 && scroll.offset <= 0.52;
         if (groupRef.current) {
             groupRef.current.visible = isNearForest;
@@ -37,7 +38,7 @@ export function ForestSection() {
                 />
             </Suspense>
 
-            {/* Iluminación mágica verde esmeralda con buen alcance */}
+            {/* Iluminación mágica verde esmeralda */}
             <pointLight
                 position={[0, 4.5, 0]}
                 intensity={9.0}
@@ -65,7 +66,7 @@ export function ForestSection() {
                 <StoneArch position={[0, 0, -3.5]} scale={1.3} rotation={[0, 0.1, 0]} />
             </Suspense>
 
-            {/* Cristal Flotante de Conocimiento (sutil y elegante en el centro del arco) */}
+            {/* Cristal Flotante de Conocimiento */}
             <Float speed={2.5} rotationIntensity={1.8} floatIntensity={1.5}>
                 <mesh position={[0, 3.0, -3.5]} castShadow>
                     <octahedronGeometry args={[0.85, 0]} />
@@ -79,12 +80,19 @@ export function ForestSection() {
                 </mesh>
             </Float>
 
-            {/* Tronco caído */}
+            {/* Tronco caído + Hobbit sentado */}
             <Suspense fallback={null}>
                 <FallenLog position={[-2.8, 0, 1.2]} scale={1.3} rotation={[0, 0.7, 0]} />
+
+                {/* 🧙 HOBBIT SOBRE EL TRONCO */}
+                <HobbitCharacter
+                    position={[-2.8, 0.45, 1.2]}
+                    scale={0.75}
+                    rotation={[0, 1.2, 0]}
+                />
             </Suspense>
 
-            {/* 🍄 BOSQUE DE HONGOS BIOLUMINISCENTES (Abundantes por todo el claro) */}
+            {/* 🍄 HONGOS BIOLUMINISCENTES */}
             <Suspense fallback={null}>
                 <GlowingMushrooms position={[-2.2, 0, -2.5]} scale={1.1} rotation={[0, 0.5, 0]} />
                 <GlowingMushrooms position={[2.4, 0, -2.2]} scale={1.2} rotation={[0, -0.8, 0]} />
@@ -96,7 +104,7 @@ export function ForestSection() {
                 <GlowingMushrooms position={[-2.0, 0, 2.8]} scale={1.0} rotation={[0, -0.5, 0]} />
             </Suspense>
 
-            {/* Luz mágica emanando de las colonias de hongos */}
+            {/* Luces mágicas de los hongos */}
             <pointLight position={[-2.2, 0.6, -2.5]} color="#34d399" intensity={2.5} distance={7} decay={2} />
             <pointLight position={[2.4, 0.6, -2.2]} color="#6ee7b7" intensity={2.5} distance={7} decay={2} />
             <pointLight position={[0.5, 0.6, 2.5]} color="#34d399" intensity={2.0} distance={6} decay={2} />
@@ -104,7 +112,7 @@ export function ForestSection() {
             {/* Partículas esmeralda flotantes */}
             <Sparkles count={180} scale={[18, 14, 18]} size={4.0} speed={0.5} color="#34d399" />
 
-            {/* 🌲 ARBOLEDA DENSA DE PINOS (Múltiples pinos rodeando el claro) */}
+            {/* 🌲 ARBOLEDA DENSA DE PINOS */}
             <Suspense fallback={null}>
                 <PineTree position={[-6.0, 0, -5.0]} scale={1.4} />
                 <PineTree position={[-7.5, 0, -2.0]} scale={1.6} />
@@ -118,7 +126,6 @@ export function ForestSection() {
                 <PineTree position={[6.8, 0, 4.8]} scale={1.3} />
                 <PineTree position={[4.5, 0, 6.2]} scale={1.25} />
 
-                {/* Fondo detrás del portal - Muralla impenetrable de árboles densos */}
                 <PineCluster position={[0.0, 0, -9.5]} scale={2.5} />
                 <PineCluster position={[-4.5, 0, -8.5]} scale={2.2} />
                 <PineCluster position={[4.5, 0, -8.5]} scale={2.2} />
@@ -129,7 +136,6 @@ export function ForestSection() {
                 <PineTree position={[2.5, 0, -7.0]} scale={1.8} />
                 <PineTree position={[0.0, 0, -7.5]} scale={2.0} />
 
-                {/* Pared oscura de fondo para no dejar escapar luz ni vacío */}
                 <mesh position={[0, 4, -11]}>
                     <planeGeometry args={[50, 18]} />
                     <meshBasicMaterial color="#040d08" fog={false} />

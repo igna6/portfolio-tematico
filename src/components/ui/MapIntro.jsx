@@ -93,10 +93,12 @@ export function MapIntro({ scrollProgress = 0 }) {
                 </div>
             </div>
 
-            <header className="relative z-30 w-full px-6 md:px-12 py-5 flex justify-between items-center pointer-events-none" style={{ opacity: uiOpacity }}>
-                <img src={logoIb} alt="IB." className="h-10 w-auto object-contain" draggable={false} />
-                <a href="mailto:contacto@ejemplo.com" className="px-4 py-1.5 bg-amber-600/90 hover:bg-amber-500 text-stone-950 font-cinzel font-bold text-xs rounded border border-amber-300/60 transition-all shadow-[0_0_15px_rgba(245,158,11,0.4)] pointer-events-auto cursor-pointer">
-                    HABLEMOS ↗
+            <header className="relative z-30 w-full px-6 md:px-12 py-5 flex justify-end items-center pointer-events-none" style={{ opacity: uiOpacity }}>
+                <a
+                    href="mailto:ignacio6bruzzesi@gmail.com"
+                    className="px-4 py-1.5 bg-amber-600/90 hover:bg-amber-500 text-stone-950 font-cinzel font-bold text-xs rounded border border-amber-300/60 transition-all shadow-[0_0_15px_rgba(245,158,11,0.4)] pointer-events-auto cursor-pointer"
+                >
+                    HABLEMOS
                 </a>
             </header>
         </div>

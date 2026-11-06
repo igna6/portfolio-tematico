@@ -120,10 +120,28 @@ export const OverlayUI = () => {
 
     useEffect(() => setMounted(true), []);
 
+    // Función para volver al inicio (El mapa)
+    const handleReturnToMap = () => {
+        if (scroll && scroll.el) {
+            scroll.el.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
     if (!scroll || !scroll.fixed || !mounted) return null;
 
     return createPortal(
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none text-amber-100 overflow-hidden">
+
+            {/* 👑 LOGO IB. - FIJO EN TODA LA NAVEGACIÓN (Lleva al mapa) */}
+            <button
+                onClick={handleReturnToMap}
+                className="fixed top-6 left-6 z-[100] w-12 h-12 flex items-center justify-center bg-[#090d16]/90 border border-slate-700/60 rounded backdrop-blur-md hover:border-amber-500/60 hover:shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer pointer-events-auto"
+                aria-label="Volver al mapa"
+            >
+                <span className="font-cinzel text-slate-300 font-bold text-xl tracking-wider group-hover:text-amber-400 transition-colors duration-300">
+                    IB.
+                </span>
+            </button>
 
             <MapIntro scrollProgress={progress} />
 
