@@ -25,3 +25,40 @@ body {
     background-color: #070a12;
     color: #fef3c7;
 }
+
+@keyframes shimmer-slide {
+    0% {
+        transform: translateX(-120%) skewX(-18deg);
+    }
+    100% {
+        transform: translateX(220%) skewX(-18deg);
+    }
+}
+
+@keyframes glow-breathe {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.28);
+    }
+    50% {
+        box-shadow: 0 0 34px rgba(245, 158, 11, 0.55);
+    }
+}
+
+.btn-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 45%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: translateX(-120%) skewX(-18deg);
+    transition: none;
+    pointer-events: none;
+}
+
+.btn-shimmer:hover::after {
+    animation: shimmer-slide 0.85s ease-out forwards;
+}
+
+.amber-glow-idle {
+    animation: glow-breathe 3s ease-in-out infinite;
+}

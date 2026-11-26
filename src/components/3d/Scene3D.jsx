@@ -1,7 +1,8 @@
 import React, { Suspense, useRef } from 'react';
+import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { ScrollControls, Scroll } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing';
 import { CameraRig } from './CameraRig';
 import { DynamicLighting } from './DynamicLighting';
 import { HobbitModel } from './HobbitCharacter';
@@ -29,38 +30,21 @@ export const Scene3D = ({ children }) => {
             <Canvas
                 shadows
                 camera={{ fov: 45, position: [0, 5.0, 16.0], near: 0.1, far: 1000 }}
-                gl={{ antialias: true, powerPreference: 'high-performance' }}
+                gl={{
+                    antialias: true,
+                    powerPreference: 'high-performance',
+                    toneMapping: THREE.ACESFilmicToneMapping,
+                    toneMappingExposure: 1.05
+                }}
             >
-                <fogExp2 attach="fog" args={['#06080d', 0.02]} />
+                <fogExp2 attach="fog" args={['#06080d', 0.018]} />
 
                 <DynamicLighting scrollProgress={scrollProgress} />
 
-                <group name="chapters-world">
-                    {/* 🌻 CAPÍTULO I: LA COMARCA */}
-                    <Suspense fallback={null}>
-                        <HobbitModel position={[0, 0, 3.8]} />
-                        <ShireEnvironment />
-                    </Suspense>
-
-                    {/* 🌲 CAPÍTULO II: EL BOSQUE */}
-                    <Suspense fallback={null}>
-                        <ForestSection />
-                    </Suspense>
-
-                    {/* 🕯️ CAPÍTULO III: MORIA */}
-                    <Suspense fallback={null}>
-                        <MoriaSection />
-                    </Suspense>
-
-                    {/* 💎 CAPÍTULO IV: EREBOR */}
-                    <Suspense fallback={null}>
-                        <EreborSection />
-                    </Suspense>
-                </group>
-
                 <EffectComposer disableNormalPass>
-                    <Bloom luminanceThreshold={0.4} intensity={1.0} mipmapBlur />
-                    <Vignette darkness={0.9} offset={0.3} />
+                    <Bloom luminanceThreshold={0.48} intensity={0.85} mipmapBlur />
+                    <Noise opacity={0.022} />
+                    <Vignette darkness={0.78} offset={0.28} />
                 </EffectComposer>
 
                 <ScrollControls pages={8} damping={0.25}>
@@ -68,6 +52,31 @@ export const Scene3D = ({ children }) => {
                         onProgressUpdate={handleProgressUpdate}
                         onFadeUpdate={handleFadeUpdate}
                     />
+
+                    {/* ⚠️ Todos los biomas DENTRO de ScrollControls para acceder al useScroll() context */}
+                    <group name="chapters-world">
+                        {/* 🌻 CAPÍTULO I: LA COMARCA */}
+                        <Suspense fallback={null}>
+                            <HobbitModel position={[0, 0, 3.8]} />
+                            <ShireEnvironment />
+                        </Suspense>
+
+                        {/* 🌲 CAPÍTULO II: EL BOSQUE */}
+                        <Suspense fallback={null}>
+                            <ForestSection />
+                        </Suspense>
+
+                        {/* 🕯️ CAPÍTULO III: MORIA */}
+                        <Suspense fallback={null}>
+                            <MoriaSection />
+                        </Suspense>
+
+                        {/* 💎 CAPÍTULO IV: EREBOR */}
+                        <Suspense fallback={null}>
+                            <EreborSection />
+                        </Suspense>
+                    </group>
+
                     <Scroll html style={{ width: '100vw' }}>
                         {children}
                     </Scroll>

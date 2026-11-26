@@ -1,13 +1,16 @@
-import React, { useRef, Suspense } from 'react';
-import { SectionBackground } from './SectionBackground';
+import React, { useRef, Suspense, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, Sparkles, useScroll } from '@react-three/drei';
+import { Sparkles, useScroll, MeshReflectorMaterial } from '@react-three/drei';
+import { createMarbleTextures, createStoneTileTextures } from './ProceduralTextures';
 import {
     DwarfColumn,
+    DwarfShield,
     GoldPileModel,
     Rock1,
     Rock2,
-    BrazierModel
+    BrazierModel,
+    FireModel,
+    StoneArch
 } from './Models';
 
 // 👑 Trono Monumental Esculpido de Erebor (Geometría Enana & Oro)
@@ -109,14 +112,41 @@ export function ProceduralThrone({ position = [0, 0, 0], scale = 1 }) {
     );
 }
 
+// 🏛️ VIGA REAL DE TECHO EN EREBOR CON CAPITELES ALINEADOS Y DETALLES DORADOS
+function RoyalHallArch({ z }) {
+    return (
+        <group position={[0, 7.6, z]}>
+            <mesh castShadow receiveShadow>
+                <boxGeometry args={[18.0, 0.9, 1.3]} />
+                <meshStandardMaterial color="#191f2b" roughness={0.65} metalness={0.35} />
+            </mesh>
+            <mesh position={[0, -0.5, 0]}>
+                <boxGeometry args={[17.2, 0.2, 0.9]} />
+                <meshStandardMaterial color="#b48318" roughness={0.28} metalness={0.85} />
+            </mesh>
+            {/* Capiteles escalonados apoyados sobre las columnas en x = ±7.0 */}
+            <mesh position={[-7.0, -0.75, 0]}>
+                <boxGeometry args={[2.3, 0.45, 2.0]} />
+                <meshStandardMaterial color="#232b3b" roughness={0.6} metalness={0.35} />
+            </mesh>
+            <mesh position={[7.0, -0.75, 0]}>
+                <boxGeometry args={[2.3, 0.45, 2.0]} />
+                <meshStandardMaterial color="#232b3b" roughness={0.6} metalness={0.35} />
+            </mesh>
+        </group>
+    );
+}
+
 export function EreborSection() {
     const scroll = useScroll();
     const groupRef = useRef();
+    const marbleTextures = useMemo(() => createMarbleTextures(10, 12), []);
+    const wallTextures = useMemo(() => createStoneTileTextures(10, 5), []);
 
     useFrame(() => {
         if (!scroll) return;
-        // 🎯 Hacemos que Erebor empiece a mostrarse a partir del 80% del scroll (Capítulo IV)
-        const isNearErebor = scroll.offset >= 0.80 && scroll.offset <= 1.0;
+        // Erebor es exclusivamente visible desde el corte negro de Cap III hasta el final
+        const isNearErebor = scroll.offset >= 0.850 && scroll.offset <= 1.0;
         if (groupRef.current) {
             groupRef.current.visible = isNearErebor;
         }
@@ -124,69 +154,104 @@ export function EreborSection() {
 
     return (
         <group ref={groupRef} position={[0, 0, -90]} name="erebor-biome">
-            {/* 🖼️ DOMO PANORÁMICO 360° DE EREBOR */}
-            <Suspense fallback={null}>
-                <SectionBackground
-                    path="/backgrounds/erebor.jpg"
-                    radius={55}
-                    position={[0, 0, -8]}
-                    rotation={[0, -Math.PI / 2, 0]}
-                />
-            </Suspense>
-            {/* Suelo del Gran Salón de Thrór */}
+            {/* Suelo amplio de mármol oscuro pulido con reflejos reales del salón */}
             <mesh position={[0, 0.01, -5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                <planeGeometry args={[34, 38]} />
-                <meshStandardMaterial color="#181d28" roughness={0.8} metalness={0.25} />
+                <planeGeometry args={[62, 68]} />
+                <MeshReflectorMaterial
+                    blur={[300, 100]}
+                    resolution={512}
+                    mixBlur={0.9}
+                    mixStrength={18}
+                    roughness={0.55}
+                    depthScale={1.0}
+                    minDepthThreshold={0.4}
+                    maxDepthThreshold={1.4}
+                    color="#151a24"
+                    metalness={0.45}
+                    map={marbleTextures.map}
+                    bumpMap={marbleTextures.bumpMap}
+                    bumpScale={0.04}
+                />
             </mesh>
 
-            {/* Muro posterior de la montaña enana - Sellado completo */}
-            <mesh position={[0, 12, -18]} receiveShadow>
-                <boxGeometry args={[48, 28, 2]} />
-                <meshStandardMaterial color="#0e121a" roughness={0.9} />
+            {/* 🟥 ALFOMBRA REAL CARMESÍ Y BORDE DORADO HACIA EL TRONO */}
+            <mesh position={[0, 0.025, -1.5]} receiveShadow>
+                <boxGeometry args={[3.2, 0.02, 15]} />
+                <meshStandardMaterial color="#5c1111" roughness={0.82} />
+            </mesh>
+            <mesh position={[-1.68, 0.028, -1.5]}>
+                <boxGeometry args={[0.16, 0.025, 15]} />
+                <meshStandardMaterial color="#d4a017" roughness={0.25} metalness={0.9} />
+            </mesh>
+            <mesh position={[1.68, 0.028, -1.5]}>
+                <boxGeometry args={[0.16, 0.025, 15]} />
+                <meshStandardMaterial color="#d4a017" roughness={0.25} metalness={0.9} />
             </mesh>
 
-            {/* Muros laterales del Salón Real */}
-            <mesh position={[-16, 12, -4]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-                <boxGeometry args={[36, 28, 2]} />
-                <meshStandardMaterial color="#0e121a" roughness={0.9} />
+            {/* 🏛️ ARQUITECTURA DE SALÓN REAL: TECHO, MUROS DE SILLAR Y PÓRTICO TRAS EL TRONO */}
+            <mesh position={[0, 9.2, -6]}>
+                <boxGeometry args={[34, 1.4, 52]} />
+                <meshStandardMaterial color="#0b0e15" roughness={0.92} />
             </mesh>
-            <mesh position={[16, 12, -4]} rotation={[0, Math.PI / 2, 0]} receiveShadow>
-                <boxGeometry args={[36, 28, 2]} />
-                <meshStandardMaterial color="#0e121a" roughness={0.9} />
+            <mesh position={[-12.5, 4.5, -6]} receiveShadow>
+                <boxGeometry args={[2.5, 10.5, 52]} />
+                <meshStandardMaterial
+                    map={wallTextures.map}
+                    bumpMap={wallTextures.bumpMap}
+                    bumpScale={0.08}
+                    roughness={0.85}
+                    metalness={0.2}
+                />
+            </mesh>
+            <mesh position={[12.5, 4.5, -6]} receiveShadow>
+                <boxGeometry args={[2.5, 10.5, 52]} />
+                <meshStandardMaterial
+                    map={wallTextures.map}
+                    bumpMap={wallTextures.bumpMap}
+                    bumpScale={0.08}
+                    roughness={0.85}
+                    metalness={0.2}
+                />
             </mesh>
 
-            {/* 👑 Trono Real centrado */}
+            <RoyalHallArch z={1} />
+            <RoyalHallArch z={-6} />
+            <RoyalHallArch z={-13} />
+
+            {/* Gran pórtico monumental detrás del Trono con muro de piedra labrada */}
+            <Suspense fallback={null}>
+                <StoneArch position={[0, 0, -16.5]} scale={2.6} rotation={[0, 0, 0]} />
+            </Suspense>
+            <mesh position={[0, 5.2, -19.5]} receiveShadow>
+                <boxGeometry args={[28, 12, 1.5]} />
+                <meshStandardMaterial
+                    map={wallTextures.map}
+                    bumpMap={wallTextures.bumpMap}
+                    bumpScale={0.08}
+                    roughness={0.88}
+                    metalness={0.18}
+                />
+            </mesh>
+            <pointLight position={[0, 4.5, -15.5]} color="#f59e0b" intensity={6.5} distance={22} decay={2} />
+
+            {/* 👑 Trono Real centrado e iluminado cálidamente */}
             <ProceduralThrone position={[0, 0, -11]} scale={1.3} />
 
-            {/* 💎 La Piedra del Arca (Arkenstone) */}
-            <Float speed={2.0} rotationIntensity={1.4} floatIntensity={1.5}>
-                <mesh position={[0, 4.0, -8.5]} castShadow>
-                    <octahedronGeometry args={[0.35, 0]} />
-                    <meshStandardMaterial
-                        color="#ffffff"
-                        emissive="#fde047"
-                        emissiveIntensity={2.5}
-                        roughness={0.05}
-                        metalness={0.95}
-                    />
-                </mesh>
-            </Float>
-
-            {/* 💡 Haz de luz celestial centrado en el Trono */}
+            {/* Iluminación arquitectónica directa sobre el Trono Real (sin cono ni rombo flotante) */}
             <spotLight
-                position={[0, 18, -3]}
-                target-position={[0, 2, -10]}
+                position={[0, 14, -3]}
+                target-position={[0, 2.2, -10.5]}
                 color="#fde047"
-                intensity={12.0}
-                angle={0.65}
-                penumbra={0.7}
-                distance={38}
+                intensity={14.0}
+                angle={0.55}
+                penumbra={0.8}
+                distance={32}
                 castShadow
             />
-            <pointLight position={[0, 5, -8.5]} color="#fde047" intensity={5.0} distance={20} decay={2} />
-            <pointLight position={[0, 3, 0]} color="#fbbf24" intensity={4.0} distance={24} decay={2} />
+            <pointLight position={[0, 4.8, -8.5]} color="#fde047" intensity={5.5} distance={18} decay={2} />
+            <pointLight position={[0, 3.2, 0]} color="#fbbf24" intensity={4.5} distance={24} decay={2} />
 
-            {/* Columnas masivas custodiando el salón */}
+            {/* Columnas masivas con escudos enanos y braseros con fuego real */}
             <Suspense fallback={null}>
                 <DwarfColumn position={[-7.0, 0, 1]} scale={1.3} rotation={[0, 0.1, 0]} />
                 <DwarfColumn position={[-7.0, 0, -6]} scale={1.3} rotation={[0, -0.15, 0]} />
@@ -196,13 +261,27 @@ export function EreborSection() {
                 <DwarfColumn position={[7.0, 0, -6]} scale={1.3} rotation={[0, 0.2, 0]} />
                 <DwarfColumn position={[7.0, 0, -13]} scale={1.3} rotation={[0, -0.15, 0]} />
 
+                <DwarfShield position={[-5.9, 2.8, 1.0]} scale={0.75} rotation={[0, Math.PI / 2, 0]} />
+                <DwarfShield position={[5.9, 2.8, 1.0]} scale={0.75} rotation={[0, -Math.PI / 2, 0]} />
+                <DwarfShield position={[-5.9, 2.8, -6.0]} scale={0.75} rotation={[0, Math.PI / 2, 0]} />
+                <DwarfShield position={[5.9, 2.8, -6.0]} scale={0.75} rotation={[0, -Math.PI / 2, 0]} />
+
                 <BrazierModel position={[-3.5, 0, -7.5]} scale={0.55} />
+                <FireModel position={[-3.5, 0.42, -7.5]} scale={0.55} />
                 <BrazierModel position={[3.5, 0, -7.5]} scale={0.55} />
+                <FireModel position={[3.5, 0.42, -7.5]} scale={0.55} />
+
+                <BrazierModel position={[-3.8, 0, -1.5]} scale={0.5} />
+                <FireModel position={[-3.8, 0.38, -1.5]} scale={0.5} />
+                <BrazierModel position={[3.8, 0, -1.5]} scale={0.5} />
+                <FireModel position={[3.8, 0.38, -1.5]} scale={0.5} />
             </Suspense>
 
-            {/* Luz de los braseros del salón real */}
-            <pointLight position={[-3.5, 1.2, -7.5]} color="#ff7a00" intensity={4.0} distance={12} decay={2} />
-            <pointLight position={[3.5, 1.2, -7.5]} color="#ff7a00" intensity={4.0} distance={12} decay={2} />
+            {/* Luz cálida de los cuatro braseros del salón real */}
+            <pointLight position={[-3.5, 1.2, -7.5]} color="#ff7a00" intensity={4.5} distance={14} decay={2} />
+            <pointLight position={[3.5, 1.2, -7.5]} color="#ff7a00" intensity={4.5} distance={14} decay={2} />
+            <pointLight position={[-3.8, 1.2, -1.5]} color="#ff7a00" intensity={3.8} distance={12} decay={2} />
+            <pointLight position={[3.8, 1.2, -1.5]} color="#ff7a00" intensity={3.8} distance={12} decay={2} />
 
             {/* 💰 RIQUEZA Y TESORO DE SMAUG */}
             <Suspense fallback={null}>

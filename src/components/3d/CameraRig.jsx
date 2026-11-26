@@ -56,6 +56,8 @@ export const CameraRig = ({ onProgressUpdate, onFadeUpdate }) => {
     const scroll = useScroll();
     const targetPos = useRef(new THREE.Vector3());
     const targetLook = useRef(new THREE.Vector3());
+    const currentLook = useRef(new THREE.Vector3(0, 1.0, 0));
+    const lastBiomeRef = useRef(-1);
 
     useFrame((state, delta) => {
         if (!scroll) return;
@@ -65,19 +67,18 @@ export const CameraRig = ({ onProgressUpdate, onFadeUpdate }) => {
         if (onProgressUpdate) onProgressUpdate(progress);
 
         let fadeOpacity = 0;
+        let activeBiome = 0;
+        let shouldSnap = false;
 
         if (progress < MAP_END) {
             // ── PANTALLA DEL MAPA: cámara estática en vista aérea lejana ──
+            activeBiome = 0;
             targetPos.current.set(0, 5.5, 17.0);
             targetLook.current.set(0, 1.0, 0);
         } else {
             // ── CAPÍTULOS 3D ──────────────────────────────────────────────
-            // Normalizar a 0-1 dentro del rango post-mapa (0.125 → 1.0)
             const chapterProgress = (progress - MAP_END) / (1 - MAP_END);
 
-            // Cada capítulo ocupa un segmento igual del rango normalizado
-            // (4 capítulos pero el último es más corto: ajustamos con pesos)
-            // Pesos: [2, 2, 2, 1] / 7 → Comarca 2/7, Bosque 2/7, Moria 2/7, Erebor 1/7
             const weights = [2, 2, 2, 1];
             const totalWeight = 7;
             const boundaries = weights.reduce((acc, w, i) => {
@@ -85,7 +86,6 @@ export const CameraRig = ({ onProgressUpdate, onFadeUpdate }) => {
                 acc.push(prev + w / totalWeight);
                 return acc;
             }, []);
-            // boundaries = [2/7, 4/7, 6/7, 7/7]
 
             let chapterIndex = 0;
             let localT = 0;
@@ -101,9 +101,10 @@ export const CameraRig = ({ onProgressUpdate, onFadeUpdate }) => {
 
             const track = chapterTracks[chapterIndex];
             const nextTrack = chapterTracks[Math.min(chapterIndex + 1, chapterTracks.length - 1)];
+            const hasNextChapter = chapterIndex < chapterTracks.length - 1;
 
-            // CAMINATA: de 0% al 68% del tiempo en el capítulo
-            const walkT = Math.min(localT / 0.68, 1.0);
+            // CAMINATA: de 0% al 76% del capítulo (más tiempo para ver cada escena)
+            const walkT = Math.min(localT / 0.76, 1.0);
 
             const basePos = new THREE.Vector3().lerpVectors(
                 new THREE.Vector3(...track.startPos),
@@ -117,42 +118,66 @@ export const CameraRig = ({ onProgressUpdate, onFadeUpdate }) => {
             );
 
             // Head bobbing sutil durante la caminata
-            const t = localT;
-            if (t > 0.02 && t < 0.98) {
-                const cycle = t * Math.PI * 14;
-                basePos.y += Math.sin(cycle) * 0.03;
-                basePos.x += Math.cos(cycle * 0.5) * 0.014;
+            if (localT > 0.02 && localT < 0.78) {
+                const cycle = localT * Math.PI * 14;
+                basePos.y += Math.sin(cycle) * 0.025;
+                basePos.x += Math.cos(cycle * 0.5) * 0.012;
             }
 
-            // FADE TO BLACK: entre el 68%-88% (fade out) y 88%-100% (fade in → inicio siguiente)
-            if (localT >= 0.68 && localT <= 0.88) {
-                fadeOpacity = (localT - 0.68) / 0.20;
-            } else if (localT > 0.88) {
-                fadeOpacity = 1.0 - (localT - 0.88) / 0.12;
-            }
-
-            if (localT >= 0.88) {
-                const nextT = (localT - 0.88) / 0.12;
-                targetPos.current.lerpVectors(
-                    new THREE.Vector3(...nextTrack.startPos),
-                    new THREE.Vector3(...nextTrack.endPos),
-                    nextT * 0.08
-                );
-                targetLook.current.lerpVectors(
-                    new THREE.Vector3(...nextTrack.startLook),
-                    new THREE.Vector3(...nextTrack.endLook),
-                    nextT * 0.08
-                );
+            if (hasNextChapter) {
+                // FADE OUT: 0.78 → 0.88 | NEGRO TOTAL: 0.88 → 0.92 | FADE IN: 0.92 → 1.00
+                if (localT >= 0.78 && localT < 0.88) {
+                    fadeOpacity = (localT - 0.78) / 0.10;
+                    activeBiome = chapterIndex;
+                    targetPos.current.copy(basePos);
+                    targetLook.current.copy(baseLook);
+                } else if (localT >= 0.88 && localT < 0.92) {
+                    fadeOpacity = 1.0;
+                    // Cambio de bioma exactamente bajo telón 100% negro
+                    activeBiome = chapterIndex + 1;
+                    targetPos.current.set(...nextTrack.startPos);
+                    targetLook.current.set(...nextTrack.startLook);
+                    shouldSnap = true;
+                } else if (localT >= 0.92) {
+                    fadeOpacity = 1.0 - (localT - 0.92) / 0.08;
+                    activeBiome = chapterIndex + 1;
+                    const nextT = (localT - 0.92) / 0.08;
+                    targetPos.current.lerpVectors(
+                        new THREE.Vector3(...nextTrack.startPos),
+                        new THREE.Vector3(...nextTrack.endPos),
+                        nextT * 0.05
+                    );
+                    targetLook.current.lerpVectors(
+                        new THREE.Vector3(...nextTrack.startLook),
+                        new THREE.Vector3(...nextTrack.endLook),
+                        nextT * 0.05
+                    );
+                } else {
+                    activeBiome = chapterIndex;
+                    targetPos.current.copy(basePos);
+                    targetLook.current.copy(baseLook);
+                }
             } else {
+                // Capítulo final (Erebor): sin fade out al final
+                activeBiome = chapterIndex;
                 targetPos.current.copy(basePos);
                 targetLook.current.copy(baseLook);
             }
         }
 
-        if (onFadeUpdate) onFadeUpdate(fadeOpacity);
+        if (onFadeUpdate) onFadeUpdate(THREE.MathUtils.clamp(fadeOpacity, 0, 1));
 
-        state.camera.position.lerp(targetPos.current, delta * 5.5);
-        state.camera.lookAt(targetLook.current);
+        // Si cambió de bioma o está en el corte negro, snap instantáneo para no volar por el vacío
+        if (lastBiomeRef.current !== activeBiome || shouldSnap) {
+            state.camera.position.copy(targetPos.current);
+            currentLook.current.copy(targetLook.current);
+            lastBiomeRef.current = activeBiome;
+        } else {
+            state.camera.position.lerp(targetPos.current, Math.min(1, delta * 6.0));
+            currentLook.current.lerp(targetLook.current, Math.min(1, delta * 6.0));
+        }
+
+        state.camera.lookAt(currentLook.current);
     });
 
     return null;

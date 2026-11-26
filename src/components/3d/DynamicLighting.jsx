@@ -3,45 +3,45 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 const BIOME_SETTINGS = [
-    // 0. La Comarca
+    // 0. La Comarca — Tarde dorada luminosa (Golden Hour)
     {
-        fogColor: '#09111e',
-        fogDensity: 0.016,
-        hemiSky: '#fef3c7',
-        hemiGround: '#1a3a1a',
-        hemiIntensity: 0.9,
-        dirColor: '#fbbf24',
-        dirIntensity: 2.5
+        fogColor: '#d99862',
+        fogDensity: 0.013,
+        hemiSky: '#fff0cc',
+        hemiGround: '#3d5a2b',
+        hemiIntensity: 1.55,
+        dirColor: '#ffbe6b',
+        dirIntensity: 3.4
     },
     // 1. El Bosque del Conocimiento
     {
-        fogColor: '#051610',
-        fogDensity: 0.022,
+        fogColor: '#05140e',
+        fogDensity: 0.025,
         hemiSky: '#6ee7b7',
         hemiGround: '#064e3b',
-        hemiIntensity: 0.6,
+        hemiIntensity: 0.75,
         dirColor: '#34d399',
-        dirIntensity: 1.2
+        dirIntensity: 1.4
     },
-    // 2. Minas de Moria (Cambiado de marrón #451a03 a gris piedra oscuro)
+    // 2. Minas de Moria
     {
-        fogColor: '#08080a',
+        fogColor: '#090706',
         fogDensity: 0.022,
-        hemiSky: '#1c1917',      // 👈 Se quitó el marrón rojizo para evitar el filtro pardo
-        hemiGround: '#0c0a09',
-        hemiIntensity: 0.3,
-        dirColor: '#f97316',
-        dirIntensity: 0.8
+        hemiSky: '#523421',
+        hemiGround: '#1a110d',
+        hemiIntensity: 0.9,
+        dirColor: '#fb923c',
+        dirIntensity: 1.7
     },
-    // 3. Erebor: Salón del trono (Luz dorada más amplia y niebla cristalina)
+    // 3. Erebor: Salón del trono
     {
-        fogColor: '#0f131d',
-        fogDensity: 0.008,      // 👈 Niebla ultra tenue para ver toda la escena a la distancia
+        fogColor: '#080b12',
+        fogDensity: 0.015,
         hemiSky: '#fef08a',
         hemiGround: '#1c1917',
-        hemiIntensity: 1.4,     // 👈 Alta claridad
+        hemiIntensity: 1.3,
         dirColor: '#f59e0b',
-        dirIntensity: 4.0       // 👈 Sol dorado potente sobre el trono
+        dirIntensity: 3.6
     }
 ];
 
@@ -63,46 +63,35 @@ export function DynamicLighting({ scrollProgress }) {
 
     useFrame((state, delta) => {
         const p = THREE.MathUtils.clamp(scrollProgress.current, 0, 1);
-        const segmentCount = BIOME_SETTINGS.length - 1;
-        const rawIndex = p * segmentCount;
-        const index = Math.min(Math.floor(rawIndex), segmentCount - 1);
-        const factor = rawIndex - index;
 
-        const b1 = BIOME_SETTINGS[index];
-        const b2 = BIOME_SETTINGS[index + 1];
+        // Asignar iluminación exacta al bioma activo (sin contaminar Cap I con la oscuridad del Bosque)
+        let biomeIdx = 0;
+        if (p >= 0.850) biomeIdx = 3;
+        else if (p >= 0.600) biomeIdx = 2;
+        else if (p >= 0.350) biomeIdx = 1;
 
-        currentFogColor.current.set(b1.fogColor);
-        nextFogColor.current.set(b2.fogColor);
-        lerpedFogColor.current.lerpColors(currentFogColor.current, nextFogColor.current, factor);
+        const target = BIOME_SETTINGS[biomeIdx];
 
+        nextFogColor.current.set(target.fogColor);
         if (state.scene.fog) {
-            state.scene.fog.color.copy(lerpedFogColor.current);
-            const targetDensity = THREE.MathUtils.lerp(b1.fogDensity, b2.fogDensity, factor);
-            state.scene.fog.density = THREE.MathUtils.damp(state.scene.fog.density, targetDensity, 4, delta);
+            state.scene.fog.color.lerp(nextFogColor.current, Math.min(1, delta * 8));
+            state.scene.fog.density = THREE.MathUtils.damp(state.scene.fog.density, target.fogDensity, 6, delta);
         }
 
         if (state.scene.background) {
-            state.scene.background.copy(lerpedFogColor.current);
+            state.scene.background.lerp(nextFogColor.current, Math.min(1, delta * 8));
         }
 
         if (hemiLightRef.current) {
-            currentHemiSky.current.set(b1.hemiSky);
-            nextHemiSky.current.set(b2.hemiSky);
-            lerpedHemiSky.current.lerpColors(currentHemiSky.current, nextHemiSky.current, factor);
-            hemiLightRef.current.color.copy(lerpedHemiSky.current);
-
-            const targetHemiIntensity = THREE.MathUtils.lerp(b1.hemiIntensity, b2.hemiIntensity, factor);
-            hemiLightRef.current.intensity = THREE.MathUtils.damp(hemiLightRef.current.intensity, targetHemiIntensity, 4, delta);
+            nextHemiSky.current.set(target.hemiSky);
+            hemiLightRef.current.color.lerp(nextHemiSky.current, Math.min(1, delta * 8));
+            hemiLightRef.current.intensity = THREE.MathUtils.damp(hemiLightRef.current.intensity, target.hemiIntensity, 6, delta);
         }
 
         if (dirLightRef.current) {
-            currentDirColor.current.set(b1.dirColor);
-            nextDirColor.current.set(b2.dirColor);
-            lerpedDirColor.current.lerpColors(currentDirColor.current, nextDirColor.current, factor);
-            dirLightRef.current.color.copy(lerpedDirColor.current);
-
-            const targetDirIntensity = THREE.MathUtils.lerp(b1.dirIntensity, b2.dirIntensity, factor);
-            dirLightRef.current.intensity = THREE.MathUtils.damp(dirLightRef.current.intensity, targetDirIntensity, 4, delta);
+            nextDirColor.current.set(target.dirColor);
+            dirLightRef.current.color.lerp(nextDirColor.current, Math.min(1, delta * 8));
+            dirLightRef.current.intensity = THREE.MathUtils.damp(dirLightRef.current.intensity, target.dirIntensity, 6, delta);
         }
     });
 

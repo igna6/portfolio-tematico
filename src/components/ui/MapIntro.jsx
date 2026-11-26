@@ -25,10 +25,47 @@ export function MapIntro({ scrollProgress = 0 }) {
     if (mapOpacity <= 0.005) return null;
 
     const pins = [
-        { id: 'shire', label: 'Punto de Partida', name: 'La Comarca · Hobbiton', color: '#f59e0b', glow: 'rgba(245,158,11,0.6)', left: '30%', top: '50%', pulse: true },
-        { id: 'forest', label: 'Capítulo II', name: 'El Bosque', color: '#34d399', glow: 'rgba(52,211,153,0.5)', left: '54%', top: '42%' },
-        { id: 'moria', label: 'Capítulo III', name: 'Minas de Moria', color: '#f97316', glow: 'rgba(249,115,22,0.5)', left: '43%', top: '63%' },
-        { id: 'erebor', label: 'Capítulo IV', name: 'Erebor', color: '#facc15', glow: 'rgba(250,204,21,0.5)', left: '72%', top: '35%' }
+        {
+            id: 'shire',
+            label: 'Punto de Partida',
+            name: 'La Comarca · Hobbiton',
+            desc: 'Presentación, perfil profesional y comienzo del viaje.',
+            color: '#f59e0b',
+            glow: 'rgba(245,158,11,0.6)',
+            left: '30%',
+            top: '50%',
+            pulse: true
+        },
+        {
+            id: 'forest',
+            label: 'Capítulo II',
+            name: 'El Bosque',
+            desc: 'Galería de proyectos full stack y desarrollos destacados.',
+            color: '#34d399',
+            glow: 'rgba(52,211,153,0.5)',
+            left: '54%',
+            top: '42%'
+        },
+        {
+            id: 'moria',
+            label: 'Capítulo III',
+            name: 'Minas de Moria',
+            desc: 'Forja de habilidades técnicas, stack y herramientas.',
+            color: '#f97316',
+            glow: 'rgba(249,115,22,0.5)',
+            left: '43%',
+            top: '63%'
+        },
+        {
+            id: 'erebor',
+            label: 'Capítulo IV',
+            name: 'Erebor',
+            desc: 'Salón del Trono, contacto directo y cierre de travesía.',
+            color: '#facc15',
+            glow: 'rgba(250,204,21,0.5)',
+            left: '72%',
+            top: '35%'
+        }
     ];
 
     return (
@@ -84,23 +121,38 @@ export function MapIntro({ scrollProgress = 0 }) {
                             <div className="relative w-4 h-4 rounded-full border-2 border-white/90 flex items-center justify-center z-10" style={{ background: `radial-gradient(circle, white 20%, ${pin.color} 80%)`, boxShadow: `0 0 ${hoveredPin === pin.id ? '22px' : '12px'} ${pin.glow}`, transform: `scale(${hoveredPin === pin.id ? 1.4 : 1})`, transition: 'all 0.2s ease-out' }}>
                                 <span className="w-1.5 h-1.5 rounded-full bg-stone-950" />
                             </div>
-                            <div className="mt-2 px-2.5 py-1.5 bg-stone-950/90 backdrop-blur-md border rounded text-center z-10" style={{ borderColor: pin.color + '66', transform: `scale(${hoveredPin === pin.id ? 1.05 : 0.95}) translateY(${hoveredPin === pin.id ? -2 : 0}px)`, transition: 'all 0.2s ease-out', opacity: hoveredPin === pin.id ? 1 : pin.pulse ? 0.95 : 0.7 }}>
-                                <span className="text-[9px] font-sans uppercase tracking-widest block font-bold" style={{ color: pin.color }}>{pin.label}</span>
-                                <span className="text-xs font-cinzel font-bold text-amber-100">{pin.name}</span>
+                                <div
+                                    className="mt-2.5 px-3 py-2 bg-stone-950/92 backdrop-blur-md border rounded-lg text-center z-10 max-w-[200px] md:max-w-[220px] shadow-[0_8px_24px_rgba(0,0,0,0.8)]"
+                                    style={{
+                                        borderColor: pin.color + (hoveredPin === pin.id ? 'aa' : '44'),
+                                        transform: `scale(${hoveredPin === pin.id ? 1.05 : 0.96}) translateY(${hoveredPin === pin.id ? -3 : 0}px)`,
+                                        transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                                        opacity: hoveredPin === pin.id ? 1 : pin.pulse ? 0.95 : 0.8
+                                    }}
+                                >
+                                    <span className="text-[9px] font-sans uppercase tracking-widest block font-bold mb-0.5" style={{ color: pin.color }}>
+                                        {pin.label}
+                                    </span>
+                                    <span className="text-xs font-cinzel font-bold text-amber-100 block leading-tight">
+                                        {pin.name}
+                                    </span>
+                                    <span className="text-[10px] font-sans text-slate-300 block mt-1 leading-snug">
+                                        {pin.desc}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
                     ))}
-                </div>
+                        </div>
             </div>
 
-            <header className="relative z-30 w-full px-6 md:px-12 py-5 flex justify-end items-center pointer-events-none" style={{ opacity: uiOpacity }}>
-                <a
-                    href="mailto:ignacio6bruzzesi@gmail.com"
-                    className="px-4 py-1.5 bg-amber-600/90 hover:bg-amber-500 text-stone-950 font-cinzel font-bold text-xs rounded border border-amber-300/60 transition-all shadow-[0_0_15px_rgba(245,158,11,0.4)] pointer-events-auto cursor-pointer"
-                >
-                    HABLEMOS
-                </a>
-            </header>
-        </div>
-    );
+                <header className="relative z-30 w-full px-6 md:px-12 py-5 flex justify-end items-center pointer-events-none" style={{ opacity: uiOpacity }}>
+                    <a
+                        href="mailto:ignacio6bruzzesi@gmail.com"
+                        className="px-4 py-1.5 bg-amber-600/90 hover:bg-amber-500 text-stone-950 font-cinzel font-bold text-xs rounded border border-amber-300/60 transition-all shadow-[0_0_15px_rgba(245,158,11,0.4)] pointer-events-auto cursor-pointer"
+                    >
+                        HABLEMOS
+                    </a>
+                </header>
+            </div>
+            );
 }

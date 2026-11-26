@@ -12,7 +12,7 @@ import { useTexture } from '@react-three/drei';
  */
 export function BiomeSkyDome({
     path,
-    radius = 55,
+    radius = 70,
     position = [0, 0, 0],
     rotation = [0, -Math.PI / 2, 0]
 }) {
@@ -29,8 +29,8 @@ export function BiomeSkyDome({
 
     return (
         <mesh position={position} rotation={rotation} renderOrder={-100}>
-            {/* Esfera con corte horizontal para cielo y horizonte */}
-            <sphereGeometry args={[radius, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.65]} />
+            {/* Esfera casi completa (0.85 * PI) para que el horizonte nunca quede cortado en el vacío */}
+            <sphereGeometry args={[radius, 40, 28, 0, Math.PI * 2, 0, Math.PI * 0.85]} />
             <meshBasicMaterial
                 map={texture}
                 side={THREE.BackSide}

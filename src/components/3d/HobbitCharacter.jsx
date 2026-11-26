@@ -18,9 +18,9 @@ function HobbitInternal(props) {
 
     useFrame((state) => {
         if (groupRef.current) {
-            // Solo visible en el capítulo 1 (La Comarca)
+            // Solo visible en el capítulo 1 (La Comarca) hasta el corte negro
             if (scroll) {
-                groupRef.current.visible = scroll.offset <= 0.28;
+                groupRef.current.visible = scroll.offset < 0.350;
             }
 
             const time = state.clock.elapsedTime * 6;

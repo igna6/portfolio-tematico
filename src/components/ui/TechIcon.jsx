@@ -84,6 +84,53 @@ export function TechIcon({ name, className = "w-5 h-5" }) {
                     <path d="M11.5 13.7v4.6M13.2 12.8l5.6 2.4" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="round" />
                 </svg>
             );
+        case 'opencv':
+            return (
+                <svg viewBox="0 0 32 32" className={className} fill="none">
+                    <path d="M16 3a7 7 0 00-6.1 10.4l3-1.8a3.5 3.5 0 116.2 0l3 1.8A7 7 0 0016 3z" fill="#ff3e3e" />
+                    <path d="M8.5 16a7 7 0 006.1 10.4v-3.5a3.5 3.5 0 110-6.9v-3.5A7 7 0 008.5 16z" fill="#22c55e" />
+                    <path d="M23.5 16a7 7 0 01-6.1 10.4v-3.5a3.5 3.5 0 100-6.9v-3.5A7 7 0 0123.5 16z" fill="#3b82f6" />
+                </svg>
+            );
+        case 'cpp':
+            return (
+                <svg viewBox="0 0 32 32" className={className} fill="none">
+                    <path d="M16 2.5l11.5 6.6v13.8L16 29.5 4.5 22.9V9.1L16 2.5z" fill="#00599c" />
+                    <path d="M16 9a7 7 0 100 14 7 7 0 000-14zm0 3.2a3.8 3.8 0 110 7.6 3.8 3.8 0 010-7.6z" fill="#ffffff" />
+                    <path d="M23.2 15.2h1.4v-1.4h1.1v1.4h1.4v1.1h-1.4v1.4h-1.1v-1.4h-1.4v-1.1z" fill="#659ad2" />
+                </svg>
+            );
+        case 'ai':
+            return (
+                <svg viewBox="0 0 24 24" className={className} fill="none">
+                    <path d="M12 2l2.2 6.2L20.5 10l-6.3 2.2L12 18.5l-2.2-6.3L3.5 10l6.3-1.8L12 2z" fill="url(#ai-grad)" />
+                    <circle cx="19" cy="18.5" r="1.5" fill="#e879f9" />
+                    <defs>
+                        <linearGradient id="ai-grad" x1="3.5" y1="2" x2="20.5" y2="18.5" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#c084fc" />
+                            <stop offset="1" stopColor="#f472b6" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            );
+        case 'pandas':
+            return (
+                <svg viewBox="0 0 32 32" className={className} fill="none">
+                    <rect x="8" y="4" width="3.5" height="9" rx="1" fill="#e2e8f0" />
+                    <rect x="8" y="16" width="3.5" height="3.5" rx="1" fill="#ffca00" />
+                    <rect x="8" y="22" width="3.5" height="6" rx="1" fill="#e2e8f0" />
+                    <rect x="14.2" y="11" width="3.5" height="10" rx="1" fill="#38bdf8" />
+                    <rect x="20.5" y="4" width="3.5" height="6" rx="1" fill="#e2e8f0" />
+                    <rect x="20.5" y="12.5" width="3.5" height="3.5" rx="1" fill="#e70488" />
+                    <rect x="20.5" y="18.5" width="3.5" height="9.5" rx="1" fill="#e2e8f0" />
+                </svg>
+            );
+        case 'github':
+            return (
+                <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                </svg>
+            );
         default:
             return null;
     }
